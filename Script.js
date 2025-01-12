@@ -1,4 +1,3 @@
-// Cart system constants and state management
 class RestaurantCart {
    constructor() {
      this.elements = {
@@ -116,9 +115,6 @@ class RestaurantCart {
      }, 0);
  
      this.updateTotalAndCounter(total);
- 
-    
-    
    }
  
    updateTotalAndCounter(total) {
@@ -213,12 +209,36 @@ class RestaurantCart {
  
    // Modal controls
    openCartModal() {
-     this.elements.cartModal.style.display = "flex";
+     this.elements.cartModal.style.display = "flex"; // Exibe o modal
+     
+     // Adiciona a classe para fixar o fundo
+     document.body.classList.add("modal-open");
+ 
+     // Cria o fundo escurecido
+     const backdrop = document.createElement("div");
+     backdrop.classList.add("modal-backdrop");
+     document.body.appendChild(backdrop);
+ 
+     // Desabilita a interação com o conteúdo da página
+     document.body.style.overflow = "hidden"; 
+ 
      this.updateCartModal();
    }
  
    closeCartModal() {
-     this.elements.cartModal.style.display = "none";
+     this.elements.cartModal.style.display = "none"; // Esconde o modal
+     
+     // Remove a classe para permitir o scroll novamente
+     document.body.classList.remove("modal-open");
+ 
+     // Remove o fundo escurecido
+     const backdrop = document.querySelector(".modal-backdrop");
+     if (backdrop) {
+       backdrop.remove();
+     }
+ 
+     // Habilita a interação com o conteúdo da página novamente
+     document.body.style.overflow = "auto"; 
    }
  
    handleModalClick(event) {
@@ -243,5 +263,6 @@ class RestaurantCart {
    }
  }
  
- // Initialize the cart system
+ // Inicializar o sistema do carrinho
  const restaurantCart = new RestaurantCart();
+ 

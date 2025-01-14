@@ -168,45 +168,58 @@ class RestaurantCart {
      this.elements.addressInput.classList.toggle("border-red-500", !hasValue);
      this.elements.addressWarn.classList.toggle("hidden", hasValue);
    }
- 
    handleCheckout() {
-     if (!this.validateCheckout()) return;
- 
-     const cartItems = this.cart
-       .map(item => 
-         `${item.name} Quantidade: (${item.quantity}) Preço: R$ ${item.price} | `
-       )
-       .join("");
- 
-     const message = encodeURIComponent(cartItems);
-     const address = encodeURIComponent(this.elements.addressInput.value);
-     
-     window.open(
-       `https://wa.me/${this.whatsappPhone}?text=${message} Endereço: ${address}`,
-       "_blank"
-     );
- 
-     this.cart = [];
-     this.updateCartModal();
-   }
+    if (!this.validateCheckout()) return;
+  
+    const cartItems = this.cart
+      .map(item => 
+        `${item.name} Quantidade: (${item.quantity}) Preço: R$ ${item.price} | `
+      )
+      .join("");
+  
+    const message = encodeURIComponent(cartItems);
+    const address = encodeURIComponent(this.elements.addressInput.value);
+    
+    // Limpa o campo de endereço após finalizar o pedido
+    this.elements.addressInput.value = "";
+    this.elements.addressWarn.classList.add("hidden"); // Esconde o aviso
+    this.elements.addressInput.classList.remove("border-red-500"); // Remove o estilo de erro
+  
+    // Envia a mensagem para o WhatsApp
+    window.open(
+      `https://wa.me/${this.whatsappPhone}?text=${message} Endereço: ${address}`,
+      "_blank"
+    );
+  
+    // Limpa o carrinho
+    this.cart = [];
+    this.updateCartModal();
+  }
+  
  
    validateCheckout() {
-     if (!this.checkRestaurantOpen()) {
-       this.showToast("Ops o restaurante esta fechado", "error");
-       return false;
-     }
- 
-     if (this.cart.length === 0) return false;
- 
-     if (this.elements.addressInput.value === "") {
-       this.elements.addressWarn.classList.remove("hidden");
-       this.elements.addressInput.classList.add("border-red-500");
-       return false;
-     }
- 
-     return true;
-   }
- 
+    if (!this.checkRestaurantOpen()) {
+      this.showToast("Ops, o restaurante está fechado", "error");
+      return false;
+    }
+  
+    if (this.cart.length === 0) {
+      this.showToast("O seu carrinho está vazio", "error");
+      return false;
+    }
+  
+    if (this.elements.addressInput.value === "") {
+      // Exibe um aviso caso o endereço não tenha sido preenchido
+      this.showToast("Ops, você esqueceu de preencher seu endereço", "error");
+      this.elements.addressWarn.classList.remove("hidden"); // Exibe o aviso visualmente
+      this.elements.addressInput.classList.add("border-red-500"); // Altera o estilo para destacar o campo
+      return false;
+    }
+  
+    return true;
+  }
+   
+
    // Modal controls
    openCartModal() {
      this.elements.cartModal.style.display = "flex"; // Exibe o modal
